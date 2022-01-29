@@ -4,7 +4,7 @@ import functools
 import json
 import logging
 import pprint
-from dataclasses import dataclass, field, Field, fields
+from dataclasses import dataclass, field, Field, fields, asdict
 from pathlib import Path
 from typing import Optional
 
@@ -86,9 +86,7 @@ def load(path: str) -> None:
     if not config_file.exists():
         logger.info('Generating Default Config')
         config_file.parent.mkdir(parents=True, exist_ok=True)
-        config_file.write_text(json.dumps({
-            field.name: field.default for field in fields(Config)
-        }, indent=4))
+        config_file.write_text(json.dumps(asdict(Config()), indent=4))
     
     # This may error out if the json is malformed
     loaded: dict[str, str] = json.loads(config_file.read_text())

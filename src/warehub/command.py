@@ -11,7 +11,12 @@ from packaging import requirements
 import warehub
 from warehub import config, exceptions, settings
 
-global_args = argparse.Namespace()
+__all__ = [
+    'dispatch',
+    'add',
+    'generate',
+    'yank',
+]
 
 
 def list_dependencies_and_versions() -> List[Tuple[str, str]]:
@@ -103,7 +108,7 @@ def yank(args: List[str]):
     return yank_impl(settings.Yank.from_args(args))
 
 
-def _setup(settings: settings.Settings):
+def setup(settings: settings.Settings):
     logger = logging.getLogger(warehub.__title__)
     logger.addHandler(logging.StreamHandler(sys.stdout))
     logger.setLevel(logging.INFO if settings.verbose else logging.WARNING)
@@ -114,12 +119,12 @@ def _setup(settings: settings.Settings):
 
 
 def add_impl(settings: settings.Add):
-    _setup(settings)
+    setup(settings)
 
 
 def generate_impl(settings: settings.Generate):
-    _setup(settings)
+    setup(settings)
 
 
 def yank_impl(settings: settings.Yank):
-    _setup(settings)
+    setup(settings)

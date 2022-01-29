@@ -1,3 +1,5 @@
+import importlib_metadata
+
 __all__ = (
     '__title__',
     '__summary__',
@@ -9,10 +11,6 @@ __all__ = (
     '__copyright__',
 )
 
-__copyright__ = 'Copyright 2022 Ryan Smith'
-
-import importlib_metadata
-
 metadata = importlib_metadata.metadata('warehub')
 
 __title__ = metadata['name']
@@ -22,3 +20,5 @@ __version__ = metadata['version']
 __author__ = metadata['author']
 __email__ = metadata['author_email']
 __license__ = metadata['license']
+
+__copyright__ = 'Copyright 2022 Ryan Smith'
