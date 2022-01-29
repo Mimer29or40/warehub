@@ -1,0 +1,44 @@
+{
+  "last_commit": {
+    "__type__": "datetime",
+    "value": "2022-01-29T16:44:02.189927"
+  },
+  "project": {
+    "0": {
+      "__type__": "Project",
+      "value": {
+        "name": "RENAMED",
+        "created": {
+          "__type__": "datetime",
+          "value": "2022-01-29T15:56:29.622340"
+        },
+        "documentation": null,
+        "total_size": 0
+      }
+    },
+    "1": {
+      "__type__": "Project",
+      "value": {
+        "name": "Test2",
+        "created": {
+          "__type__": "datetime",
+          "value": "2022-01-29T16:08:55.428562"
+        },
+        "documentation": null,
+        "total_size": 0
+      }
+    },
+    "2": {
+      "__type__": "Project",
+      "value": {
+        "name": "Test3",
+        "created": {
+          "__type__": "datetime",
+          "value": "2022-01-29T16:08:57.081086"
+        },
+        "documentation": null,
+        "total_size": 0
+      }
+    }
+  }
+}

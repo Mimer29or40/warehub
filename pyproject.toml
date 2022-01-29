@@ -2,5 +2,5 @@
 requires = ["setuptools", "wheel", "setuptools_scm>=6.2"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
-write_to = "build/_version.py"
+#[tool.setuptools_scm]
+#write_to = "build/_version.py"
