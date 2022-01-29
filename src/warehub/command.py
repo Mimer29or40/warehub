@@ -9,7 +9,7 @@ import importlib_metadata
 from packaging import requirements
 
 import warehub
-from warehub import config, exceptions, settings
+from warehub import config, exceptions, arguments, database
 
 __all__ = [
     'dispatch',
@@ -89,7 +89,7 @@ def add(args: List[str]):
     :param args:
         The command-line arguments.
     """
-    return add_impl(settings.Add.from_args(args))
+    return add_impl(arguments.Add.from_args(args))
 
 
 def generate(args: List[str]):
@@ -97,7 +97,7 @@ def generate(args: List[str]):
     :param args:
         The command-line arguments.
     """
-    return generate_impl(settings.Generate.from_args(args))
+    return generate_impl(arguments.Generate.from_args(args))
 
 
 def yank(args: List[str]):
@@ -105,26 +105,28 @@ def yank(args: List[str]):
     :param args:
         The command-line arguments.
     """
-    return yank_impl(settings.Yank.from_args(args))
+    return yank_impl(arguments.Yank.from_args(args))
 
 
-def setup(settings: settings.Settings):
+def setup(arguments: arguments.Arguments):
     logger = logging.getLogger(warehub.__title__)
     logger.addHandler(logging.StreamHandler(sys.stdout))
-    logger.setLevel(logging.INFO if settings.verbose else logging.WARNING)
+    logger.setLevel(logging.INFO if arguments.verbose else logging.WARNING)
     
-    logger.info(pprint.pformat(settings))
+    logger.info(pprint.pformat(arguments))
     
-    config.load(settings.config)
+    config.load(arguments.config)
+    
+    database.Database.file(config.Config.database)
 
 
-def add_impl(settings: settings.Add):
-    setup(settings)
+def add_impl(arguments: arguments.Add):
+    setup(arguments)
 
 
-def generate_impl(settings: settings.Generate):
-    setup(settings)
+def generate_impl(arguments: arguments.Generate):
+    setup(arguments)
 
 
-def yank_impl(settings: settings.Yank):
-    setup(settings)
+def yank_impl(arguments: arguments.Yank):
+    setup(arguments)

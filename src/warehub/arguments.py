@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import argparse
+import urllib.parse
 from dataclasses import dataclass, fields, field
+from pathlib import Path
 from typing import TypeVar, Type, List, Optional
 
 import warehub
 from warehub import utils
 
 __all__ = [
-    'Settings',
+    'Arguments',
     'Add',
     'Generate',
     'Yank',
@@ -18,7 +20,7 @@ T = TypeVar('T')
 
 
 @dataclass(frozen=True)
-class Settings:
+class Arguments:
     verbose: bool = field(metadata={
         'name_or_flags': ['-v', '--verbose'],
         'default':       False,
@@ -26,11 +28,12 @@ class Settings:
         'action':        'store_true',
         'help':          'show verbose output',
     })
-    config: str = field(metadata={
+    config: Path = field(metadata={
         'name_or_flags': ['-c', '--config'],
         'default':       './config.json',
         'required':      False,
         'help':          'The path to the config file. [default: ./config.json]',
+        'convert':       (lambda string: Path(string).resolve()),
     })
     
     @classmethod
@@ -41,14 +44,22 @@ class Settings:
         
         for field in fields(cls):
             metadata = dict(field.metadata)
+            metadata.pop('convert', None)
             name_or_flags = tuple(metadata.pop('name_or_flags') if 'name_or_flags' in metadata else [])
             parser.add_argument(*name_or_flags, **metadata)
         
-        return cls(**vars(parser.parse_args(args)))
+        parsed = vars(parser.parse_args(args))
+        
+        for field in fields(cls):
+            metadata = field.metadata
+            if 'convert' in metadata and (value := parsed[field.name]) is not None:
+                parsed[field.name] = metadata['convert'](value)
+        
+        return cls(**parsed)
 
 
 @dataclass(frozen=True)
-class Add(Settings):
+class Add(Arguments):
     username: Optional[str] = field(metadata={
         'name_or_flags': ['-u', '--username'],
         'action':        utils.EnvironmentDefault,
@@ -69,13 +80,14 @@ class Add(Settings):
                          '%(env)s environment variable.) '
                          '[default: env.WAREHUB_PASSWORD]',
     })
-    domain: str = field(metadata={
+    domain: urllib.parse.ParseResult = field(metadata={
         'name_or_flags': ['-d', '--domain'],
         'default':       'https://api.github.com/',
         'required':      False,
         'help':          'The domain to access the Github api from. This '
                          'will only change for Github Enterprise users. '
                          '[default: https://api.github.com/]',
+        'convert':       urllib.parse.urlparse,
     })
     repositories: List[str] = field(metadata={
         'name_or_flags': ['repositories'],
@@ -84,28 +96,30 @@ class Add(Settings):
         'help':          'The Github repository paths to upload to the index. '
                          'Usually <user>/<repo_name>.',
     })
-    generate: Optional[str] = field(metadata={
+    generate: Optional[Path] = field(metadata={
         'name_or_flags': ['-g', '--generate'],
         'nargs':         '?',
         'default':       None,
         'const':         '.',
         'help':          'Generate the file structure if any new releases '
                          'were added at the path provided. [default: .]',
+        'convert':       (lambda string: Path(string).resolve()),
     })
 
 
 @dataclass(frozen=True)
-class Generate(Settings):
-    path: Optional[str] = field(metadata={
+class Generate(Arguments):
+    path: Optional[Path] = field(metadata={
         'name_or_flags': ['path'],
         'nargs':         '?',
         'help':          'The path to the directory to output the generated '
                          'files to. [default: .]',
+        'convert':       (lambda string: Path(string).resolve()),
     })
 
 
 @dataclass(frozen=True)
-class Yank(Settings):
+class Yank(Arguments):
     project: str = field(metadata={
         'name_or_flags': ['project'],
         'help':          'The name of the project to yank.',

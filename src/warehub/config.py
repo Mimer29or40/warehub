@@ -4,6 +4,7 @@ import functools
 import json
 import logging
 import pprint
+import urllib.parse
 from dataclasses import dataclass, field, Field, fields, asdict
 from pathlib import Path
 from typing import Optional
@@ -28,22 +29,24 @@ def _warn(field: Field, message: str) -> None:
 
 @dataclass(frozen=True)
 class Config:
-    database: str = field(
+    database: Path = field(
         default='./data.json',
         metadata={
             'on_missing': functools.partial(
                 _raise,
                 message='Config must specify \'{name}\'. Default is \'{default}\'',
-            )
+            ),
+            'convert':    (lambda string: Path(string).resolve()),
         },
     )
-    url: str = field(
+    url: urllib.parse.ParseResult = field(
         default='',
         metadata={
             'on_missing': functools.partial(
                 _raise,
                 message='Config must specify \'{name}\'. Usually \'https://<user>.github.io/<repo_name/\'',
             ),
+            'convert':    urllib.parse.urlparse,
         },
     )
     title: Optional[str] = field(
@@ -64,13 +67,14 @@ class Config:
             ),
         },
     )
-    image_url: Optional[str] = field(
+    image_url: Optional[urllib.parse.ParseResult] = field(
         default='https://pypi.org/static/images/logo-small.95de8436.svg',
         metadata={
             'on_missing': functools.partial(
                 _warn,
                 message='Config does not specify \'{name}\'. Using Default: \'{default}\'',
             ),
+            'convert':    urllib.parse.urlparse,
         },
     )
 
@@ -78,10 +82,10 @@ class Config:
 config: Config
 
 
-def load(path: str) -> None:
+def load(path: Path) -> None:
     global config
     
-    config_file: Path = Path(path).resolve()
+    config_file: Path = path.resolve()
     
     if not config_file.exists():
         logger.info('Generating Default Config')
@@ -92,11 +96,13 @@ def load(path: str) -> None:
     loaded: dict[str, str] = json.loads(config_file.read_text())
     
     for field in fields(Config):
+        metadata = field.metadata
         if field.name not in loaded or loaded[field.name] == '':
-            field.metadata['on_missing'](field)
+            metadata['on_missing'](field)
             loaded[field.name] = field.default
-
+        if 'convert' in metadata:
+            loaded[field.name] = metadata['convert'](loaded[field.name])
+    
     config = Config(**loaded)
     
     logger.info(pprint.pformat(config))
-
