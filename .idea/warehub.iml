@@ -5,8 +5,16 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/src/warehub.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/test_data" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="PackageRequirementsSettings">
+    <option name="versionSpecifier" value="Greater or equal (&gt;=x.y.z)" />
+    <option name="keepMatchingSpecifier" value="false" />
   </component>
 </module>
