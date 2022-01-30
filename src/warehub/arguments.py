@@ -112,27 +112,18 @@ class AddArgs(Arguments):
     generate: Optional[Path] = field(
         metadata={
             "name_or_flags": ["-g", "--generate"],
-            "nargs": "?",
-            "default": None,
-            "const": ".",
+            "default": False,
+            "required": False,
+            "action": "store_true",
             "help": "Generate the file structure if any new releases "
             "were added at the path provided. [default: .]",
-            "convert": (lambda string: Path(string).resolve()),
         }
     )
 
 
 @dataclass(frozen=True)
 class GenerateArgs(Arguments):
-    path: Optional[Path] = field(
-        metadata={
-            "name_or_flags": ["path"],
-            "nargs": "?",
-            "help": "The path to the directory to output the generated "
-            "files to. [default: .]",
-            "convert": (lambda string: Path(string).resolve()),
-        }
-    )
+    pass
 
 
 @dataclass(frozen=True)

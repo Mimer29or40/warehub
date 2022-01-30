@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Final, Optional
 
 import packaging.utils
 
@@ -17,17 +17,12 @@ __all__ = [
 
 
 class Directories:
-    FILES: str = "files"
-    PROJECT: str = "project"
-    SIMPLE: str = "simple"
-    PYPI: str = "pypi"
+    FILES: Final[str] = "files"
+    PROJECT: Final[str] = "project"
+    SIMPLE: Final[str] = "simple"
+    PYPI: Final[str] = "pypi"
 
-    LIST: set[str] = {
-        FILES,
-        PROJECT,
-        SIMPLE,
-        PYPI,
-    }
+    LIST: Final[set[str]] = {FILES, PROJECT, SIMPLE, PYPI}
 
 
 @dataclass

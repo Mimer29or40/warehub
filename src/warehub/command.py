@@ -29,7 +29,12 @@ def add(args: List[str]):
     :param args:
         The command-line arguments.
     """
-    return add_impl(AddArgs.from_args(args))
+
+    add_args: AddArgs = AddArgs.from_args(args)
+
+    setup(add_args)
+
+    return add_impl(add_args)
 
 
 def generate(args: List[str]):
@@ -37,7 +42,12 @@ def generate(args: List[str]):
     :param args:
         The command-line arguments.
     """
-    return generate_impl(GenerateArgs.from_args(args))
+
+    generate_args: GenerateArgs = GenerateArgs.from_args(args)
+
+    setup(generate_args)
+
+    return generate_impl(generate_args)
 
 
 def yank(args: List[str]):
@@ -45,7 +55,12 @@ def yank(args: List[str]):
     :param args:
         The command-line arguments.
     """
-    return yank_impl(YankArgs.from_args(args))
+
+    yank_args: YankArgs = YankArgs.from_args(args)
+
+    setup(yank_args)
+
+    return yank_impl(yank_args)
 
 
 def setup(args: Arguments) -> None:
@@ -63,8 +78,6 @@ def setup(args: Arguments) -> None:
 
 
 def add_impl(args: AddArgs):
-    setup(args)
-
     auth: Optional[tuple[Optional[str], Optional[str]]] = (
         (args.username or "", args.password or "")
         if args.username or args.password
@@ -145,12 +158,21 @@ def add_impl(args: AddArgs):
                 )
 
         if len(added) > 0:
-            logger.info(f"View new")
+            logger.info(f"View new Packages at:")
+            for url in added:
+                print(f"\t{url}")
+
+            if args.generate is not None:
+                generate_args: GenerateArgs = GenerateArgs(args.verbose, args.config)
+
+                logger.info(pprint.pformat(generate_args))
+
+                generate_impl(generate_args)
 
 
 def generate_impl(args: GenerateArgs):
-    setup(args)
+    pass
 
 
 def yank_impl(args: YankArgs):
-    setup(args)
+    pass

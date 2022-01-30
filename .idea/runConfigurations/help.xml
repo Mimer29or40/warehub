@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="help" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="help" type="PythonConfigurationType" factoryName="Python" folderName="warehub">
     <module name="warehub" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

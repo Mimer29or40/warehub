@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="add" type="PythonConfigurationType" factoryName="Python" folderName="warehub">
+  <configuration default="false" name="add gen" type="PythonConfigurationType" factoryName="Python" folderName="warehub">
     <module name="warehub" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="warehub" />
-    <option name="PARAMETERS" value="add --verbose --config=test_data/config.json Mimer29or40/pythonnet-stubs" />
+    <option name="PARAMETERS" value="add --verbose --config=test_data/config.json Mimer29or40/pythonnet-stubs --generate" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="true" />
