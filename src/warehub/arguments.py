@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 import argparse
-import urllib.parse
 from dataclasses import dataclass, fields, field
 from pathlib import Path
 from typing import TypeVar, Type, List, Optional
 
 import warehub
-from warehub import utils
+from warehub.utils import EnvironmentDefault, parse_url
 
 __all__ = [
     'Arguments',
-    'Add',
-    'Generate',
-    'Yank',
+    'AddArgs',
+    'GenerateArgs',
+    'YankArgs',
 ]
 
 T = TypeVar('T')
@@ -59,10 +58,10 @@ class Arguments:
 
 
 @dataclass(frozen=True)
-class Add(Arguments):
+class AddArgs(Arguments):
     username: Optional[str] = field(metadata={
         'name_or_flags': ['-u', '--username'],
-        'action':        utils.EnvironmentDefault,
+        'action':        EnvironmentDefault,
         'env':           'WAREHUB_USERNAME',
         'required':      False,
         'help':          'The username to authenticate to the repository '
@@ -72,7 +71,7 @@ class Add(Arguments):
     })
     password: Optional[str] = field(metadata={
         'name_or_flags': ['-p', '--password'],
-        'action':        utils.EnvironmentDefault,
+        'action':        EnvironmentDefault,
         'env':           'WAREHUB_PASSWORD',
         'required':      False,
         'help':          'The password to authenticate to the repository '
@@ -80,14 +79,14 @@ class Add(Arguments):
                          '%(env)s environment variable.) '
                          '[default: env.WAREHUB_PASSWORD]',
     })
-    domain: urllib.parse.ParseResult = field(metadata={
+    domain: str = field(metadata={
         'name_or_flags': ['-d', '--domain'],
         'default':       'https://api.github.com/',
         'required':      False,
         'help':          'The domain to access the Github api from. This '
                          'will only change for Github Enterprise users. '
                          '[default: https://api.github.com/]',
-        'convert':       urllib.parse.urlparse,
+        'convert':       parse_url,
     })
     repositories: List[str] = field(metadata={
         'name_or_flags': ['repositories'],
@@ -108,7 +107,7 @@ class Add(Arguments):
 
 
 @dataclass(frozen=True)
-class Generate(Arguments):
+class GenerateArgs(Arguments):
     path: Optional[Path] = field(metadata={
         'name_or_flags': ['path'],
         'nargs':         '?',
@@ -119,7 +118,7 @@ class Generate(Arguments):
 
 
 @dataclass(frozen=True)
-class Yank(Arguments):
+class YankArgs(Arguments):
     project: str = field(metadata={
         'name_or_flags': ['project'],
         'help':          'The name of the project to yank.',

@@ -1,11 +1,11 @@
 import sys
 from typing import Any
 
-from warehub import command
+from warehub.command import dispatch
 
 
 def main() -> Any:
-    return command.dispatch(sys.argv[1:])
+    return dispatch(sys.argv[1:])
 
 
 if __name__ == '__main__':

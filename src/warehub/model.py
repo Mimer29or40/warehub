@@ -7,6 +7,28 @@ import packaging.utils
 
 from warehub.database import Table
 
+__all__ = [
+    'Directories',
+    'Project',
+    'Release',
+    'File',
+    'FileName',
+]
+
+
+class Directories:
+    FILES: str = 'files'
+    PROJECT: str = 'project'
+    SIMPLE: str = 'simple'
+    PYPI: str = 'pypi'
+    
+    LIST: set[str] = {
+        FILES,
+        PROJECT,
+        SIMPLE,
+        PYPI,
+    }
+
 
 @dataclass
 class Project(Table):
