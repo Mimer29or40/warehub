@@ -8,20 +8,20 @@ import packaging.utils
 from warehub.database import Table
 
 __all__ = [
-    'Directories',
-    'Project',
-    'Release',
-    'File',
-    'FileName',
+    "Directories",
+    "Project",
+    "Release",
+    "File",
+    "FileName",
 ]
 
 
 class Directories:
-    FILES: str = 'files'
-    PROJECT: str = 'project'
-    SIMPLE: str = 'simple'
-    PYPI: str = 'pypi'
-    
+    FILES: str = "files"
+    PROJECT: str = "project"
+    SIMPLE: str = "simple"
+    PYPI: str = "pypi"
+
     LIST: set[str] = {
         FILES,
         PROJECT,
@@ -33,14 +33,13 @@ class Directories:
 @dataclass
 class Project(Table):
     name: str
-    
     created: datetime = field(default_factory=datetime.now)
     documentation: Optional[str] = None
     total_size: int = 0
-    
+
     def __repr__(self) -> str:
-        return f'Project(name={self.name}, created={self.created})'
-    
+        return f"Project(name={self.name}, created={self.created})"
+
     @property
     def normalized_name(self):
         return packaging.utils.canonicalize_name(self.name)
@@ -70,29 +69,29 @@ class Release(Table):
     uploaded_via: Optional[str] = None
     yanked: bool = False
     yanked_reason: Optional[str] = None
-    
+
     @property
     def is_pre_release(self):
-        return re.match(rf'(a|b|rc)(0|[1-9][0-9]*)', self.version) is not None
-    
+        return re.match(rf"(a|b|rc)(0|[1-9][0-9]*)", self.version) is not None
+
     @property
     def urls(self):
         _urls = {}
-        
+
         if self.home_page:
-            _urls['Homepage'] = self.home_page
+            _urls["Homepage"] = self.home_page
         if self.download_url:
-            _urls['Download'] = self.download_url
-        
+            _urls["Download"] = self.download_url
+
         for url_spec in self.project_urls:
-            name, _, url = url_spec.partition(',')
+            name, _, url = url_spec.partition(",")
             name = name.strip()
             url = url.strip()
             if name and url:
                 _urls[name] = url
-        
+
         return _urls
-    
+
     # TODO
     # @property
     # def github_repo_info_url(self):
@@ -102,18 +101,20 @@ class Release(Table):
     #         if parsed.netloc in {"github.com", "www.github.com"} and len(segments) >= 2:
     #             user_name, repo_name = segments[:2]
     #             return f"https://api.github.com/repos/{user_name}/{repo_name}"
-    
+
     @property
     def has_meta(self):
-        return any((
-            self.license,
-            self.keywords,
-            self.author,
-            self.author_email,
-            self.maintainer,
-            self.maintainer_email,
-            self.requires_python,
-        ))
+        return any(
+            (
+                self.license,
+                self.keywords,
+                self.author,
+                self.author_email,
+                self.maintainer,
+                self.maintainer_email,
+                self.requires_python,
+            )
+        )
 
 
 @dataclass
@@ -130,10 +131,10 @@ class File(Table):
     blake2_256_digest: Optional[str] = None
     upload_time: datetime = field(default_factory=datetime.now)
     uploaded_via: Optional[str] = None
-    
+
     @property
     def pgp_name(self):
-        return self.name + '.asc'
+        return self.name + ".asc"
 
 
 @dataclass
