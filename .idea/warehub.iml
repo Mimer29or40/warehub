@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.tox" />
       <excludeFolder url="file://$MODULE_DIR$/mypy" />
       <excludeFolder url="file://$MODULE_DIR$/.mypy_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/.eggs" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

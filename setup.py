@@ -13,7 +13,6 @@ setup(
     ],
     setup_requires=[
         "setuptools >= 60.5.0",
-        "setuptools_scm >= 6.4.2",
         "wheel >= 0.37.1",
         "tox >= 3.24.5",
         "black >= 22.1.0",
