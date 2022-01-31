@@ -11,10 +11,5 @@ setup(
         'readme_renderer >= 32.0',
         'cmarkgfm >= 0.7.0',
     ],
-    setup_requires=[
-        "setuptools >= 60.5.0",
-        "wheel >= 0.37.1",
-        "tox >= 3.24.5",
-        "black >= 22.1.0",
-    ]
+    setup_requires=["tox >= 3.24.5"]
 )
