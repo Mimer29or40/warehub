@@ -385,10 +385,12 @@ def generate_impl(args: GenerateArgs):
             release_dir = project_dir / release.version
             release_dir.mkdir(parents=True, exist_ok=True)
 
-            logger.info(f"Generating Release Page for: {release}")
+            logger.info("Generating Release Page for:")
+            logger.info(pprint.pformat(release))
             generate_release_page(release_dir, project, release, True)
 
-        logger.info(f"Generating Project Page for: {project}")
+        logger.info("Generating Project Page for:")
+        logger.info(pprint.pformat(project))
         generate_release_page(project_dir, project, latest)
 
     logger.info("Generating Simple Pages")
