@@ -1,10 +1,10 @@
 import argparse
 import http
+import importlib.metadata
 import sys
 from typing import Any
 
 import colorama
-import importlib_metadata
 import requests
 from packaging.requirements import Requirement
 
@@ -13,9 +13,9 @@ from warehub.exceptions import WarehubException
 
 
 def list_deps_and_versions() -> list[tuple[str, str]]:
-    requires = importlib_metadata.requires("warehub")
+    requires = importlib.metadata.requires("warehub")
     deps = [Requirement(r).name for r in requires]
-    return [(dep, importlib_metadata.version(dep)) for dep in deps]
+    return [(dep, importlib.metadata.version(dep)) for dep in deps]
 
 
 def dep_versions() -> str:
@@ -25,7 +25,8 @@ def dep_versions() -> str:
 
 
 def main() -> Any:
-    commands = importlib_metadata.entry_points(group="warehub.commands")
+    entry_points = importlib.metadata.entry_points()
+    commands = entry_points["warehub.commands"]
 
     parser = argparse.ArgumentParser(prog="warehub")
 

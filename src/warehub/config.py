@@ -11,10 +11,6 @@ from typing import Optional
 import warehub
 from warehub.utils import parse_url
 
-__all__ = [
-    "Config",
-]
-
 logger = logging.getLogger(warehub.__title__)
 
 

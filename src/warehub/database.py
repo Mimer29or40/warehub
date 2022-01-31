@@ -7,13 +7,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Literal, Type, TypeVar, Union
 
-__all__ = [
-    "Encoder",
-    "Decoder",
-    "Table",
-    "Database",
-]
-
 T = TypeVar("T")
 JsonValue = Union[dict, list, str, int, float, bool, Literal[None]]
 

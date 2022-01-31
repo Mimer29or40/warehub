@@ -8,14 +8,12 @@ from typing import Any, List, Optional, Type, TypeVar
 import warehub
 from warehub.utils import EnvironmentDefault, parse_url
 
-__all__ = [
-    "Arguments",
-    "AddArgs",
-    "GenerateArgs",
-    "YankArgs",
-]
-
 T = TypeVar("T")
+
+
+class Secure(str):
+    def __repr__(self) -> str:
+        return "***"
 
 
 @dataclass(frozen=True)
@@ -79,6 +77,7 @@ class AddArgs(Arguments):
             "(package index) as. (Can also be set via "
             "%(env)s environment variable.) "
             "[default: env.WAREHUB_USERNAME]",
+            "convert": Secure,
         }
     )
     password: Optional[str] = field(
@@ -91,6 +90,7 @@ class AddArgs(Arguments):
             "(package index) with. (Can also be set via "
             "%(env)s environment variable.) "
             "[default: env.WAREHUB_PASSWORD]",
+            "convert": Secure,
         }
     )
     domain: str = field(
@@ -104,23 +104,22 @@ class AddArgs(Arguments):
             "convert": parse_url,
         }
     )
+    no_generate: bool = field(
+        metadata={
+            "name_or_flags": ["--no-generate"],
+            "default": False,
+            "required": False,
+            "action": "store_true",
+            "help": "Skips the generation of the file structure",
+        }
+    )
     repositories: List[str] = field(
         metadata={
             "name_or_flags": ["repositories"],
             "nargs": "+",
             "metavar": "repo",
             "help": "The Github repository paths to upload to the index. "
-            "Usually <user>/<repo_name>.",
-        }
-    )
-    generate: Optional[Path] = field(
-        metadata={
-            "name_or_flags": ["-g", "--generate"],
-            "default": False,
-            "required": False,
-            "action": "store_true",
-            "help": "Generate the file structure if any new releases "
-            "were added at the path provided. [default: .]",
+            "Usually in the form <user>/<repo_name>.",
         }
     )
 

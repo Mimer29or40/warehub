@@ -5,6 +5,7 @@ import pprint
 import sys
 import tempfile
 from collections import defaultdict
+from dataclasses import asdict
 from pathlib import Path
 from typing import DefaultDict, List, Optional
 
@@ -20,13 +21,34 @@ from warehub.model import Directory, File, Project, Release, Template
 from warehub.package import Package, add_package
 from warehub.utils import delete_path, file_size_str, parse_url
 
-__all__ = [
-    "add",
-    "generate",
-    "yank",
-]
-
 logger = logging.getLogger(warehub.__title__)
+
+
+def init(args: List[str]):
+    """Execute the ``init`` command.
+    :param args:
+        The command-line arguments.
+    """
+
+    generic_args: Arguments = Arguments.from_args(args)
+
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger.setLevel(logging.DEBUG if generic_args.verbose else logging.WARNING)
+
+    logger.info(pprint.pformat(generic_args))
+
+    if not generic_args.config.exists():
+        logger.info("Generating Default Config")
+        generic_args.config.parent.mkdir(parents=True, exist_ok=True)
+        generic_args.config.write_text(json.dumps(asdict(Config()), indent=4))
+
+    logger.debug("Generating Database File")
+    Database.file(Config.path / Config.database)
+    Database.commit()
+
+    logger.debug("Generating File Structure")
+    for directory in Directory.LIST:
+        (Config.path / directory).mkdir(parents=True, exist_ok=True)
 
 
 def add(args: List[str]):
@@ -167,7 +189,7 @@ def add_impl(args: AddArgs):
             for url in added:
                 logger.info(f"\t{url}")
 
-            if args.generate is not None:
+            if not args.no_generate:
                 generate_args: GenerateArgs = GenerateArgs(args.verbose, args.config)
 
                 logger.info(pprint.pformat(generate_args))

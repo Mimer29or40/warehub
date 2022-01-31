@@ -26,11 +26,6 @@ from warehub.exceptions import InvalidDistribution
 from warehub.model import Directory, File, FileName, Project, Release
 from warehub.utils import file_size_str
 
-__all__ = [
-    "add_package",
-    "Package",
-]
-
 ONE_KB = 1024
 ONE_MB = ONE_KB * ONE_KB
 ONE_GB = ONE_KB * ONE_KB * ONE_KB
