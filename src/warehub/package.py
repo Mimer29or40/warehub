@@ -23,7 +23,7 @@ from trove_classifiers import classifiers, deprecated_classifiers
 from warehub.config import Config
 from warehub.database import Database
 from warehub.exceptions import InvalidDistribution
-from warehub.model import Directories, File, FileName, Project, Release
+from warehub.model import Directory, File, FileName, Project, Release
 from warehub.utils import file_size_str
 
 __all__ = [
@@ -189,11 +189,11 @@ def add_package(package: Package) -> None:
             f"Project is now too large. Limit is {file_size_str(MAX_PROJECT_SIZE)}"
         )
 
-    shutil.copy(package.file, Config.path / Directories.FILES / package.file.name)
+    shutil.copy(package.file, Config.path / Directory.FILES / package.file.name)
     if has_signature:
         shutil.copy(
             package.signed_file,
-            Config.path / Directories.FILES / package.signed_file.name,
+            Config.path / Directory.FILES / package.signed_file.name,
         )
     Database.commit()
 

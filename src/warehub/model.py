@@ -1,14 +1,17 @@
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
+from importlib.resources import path, read_text
 from typing import Final, Optional
 
 import packaging.utils
 
+import warehub
 from warehub.database import Table
 
 __all__ = [
-    "Directories",
+    "Directory",
+    "Template",
     "Project",
     "Release",
     "File",
@@ -16,13 +19,23 @@ __all__ = [
 ]
 
 
-class Directories:
+class Directory:
     FILES: Final[str] = "files"
     PROJECT: Final[str] = "project"
     SIMPLE: Final[str] = "simple"
     PYPI: Final[str] = "pypi"
 
     LIST: Final[set[str]] = {FILES, PROJECT, SIMPLE, PYPI}
+
+
+class Template:
+    # STYLE: Final[str] = read_text(warehub.__title__, "style.css")
+    # HOMEPAGE: Final[str] = read_text(warehub.__title__, "homepage.html")
+    with path(warehub.__title__, "templates") as path:
+        HOMEPAGE: Final[str] = (path / "homepage.html").read_text()
+        RELEASE: Final[str] = (path / "release.html").read_text()
+        SIMPLE: Final[str] = (path / "simple.html").read_text()
+        STYLE: Final[str] = (path / "style.css").read_text()
 
 
 @dataclass

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="warehub:repository-version" content="%%WAREHUB_VERSION%%"/>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <!-- Skeleton CSS -->
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" rel="stylesheet"/>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&amp;display=swap" rel="stylesheet" type="text/css"/>
+    <!-- Favicon -->
+    <link href="%%IMAGE%%" rel="icon"/>
+    <style>%%STYLE%%
+    </style>
+    <title>%%TITLE%%</title>
+</head>
+<body>
+<div class="container">
+    <section class="header">
+        <img class="value-img" src="%%IMAGE%%" width="150" alt="Repository Image"/>
+        <h2 class="title">%%TITLE%%</h2>
+    </section>
+    %%DESCRIPTION%%
+    <br>
+    <pre><code>pip install &lt;package_name&gt; --extra-index-url %%URL%%simple</code></pre>
+    <br>
+    Add this repository to PyCharm with the url:
+    <pre><code>%%URL%%simple</code></pre>
+    <hr/>
+    <h6 class="text-header">Packages</h6>%%PACKAGES%%
+</div>
+</body>
+</html>
+-

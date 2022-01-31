@@ -213,3 +213,4 @@ cython_debug/
 
 /test_data/
 /mypy/
+/_version.py

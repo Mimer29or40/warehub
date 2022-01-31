@@ -1,4 +1,4 @@
-import importlib_metadata as importlib
+import importlib.metadata
 
 __all__ = (
     "__title__",
@@ -11,7 +11,7 @@ __all__ = (
     "__copyright__",
 )
 
-metadata: importlib.PackageMetadata = importlib.metadata("warehub")
+metadata = importlib.metadata.metadata("warehub")
 
 __title__ = metadata["name"]
 __summary__ = metadata["summary"]

@@ -1,0 +1,95 @@
+body {
+    font-family: "Montserrat", serif;
+}
+
+code {
+    display: inline-block !important;
+    font-size: 1.3rem;
+}
+
+.header {
+    margin-top: 10rem;
+    text-align: center;
+}
+
+.footer {
+    margin-bottom: 10rem;
+}
+
+.side_panel {
+    font-size: 1.3rem;
+}
+
+.text-header {
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    letter-spacing: .2rem;
+    font-weight: 600;
+}
+
+.version {
+    font-size: 2.3rem;
+    font-style: italic;
+    font-weight: 300;
+}
+
+.elem {
+    margin: 1rem 1rem;
+}
+
+.card {
+    display: inline-block;
+    height: auto;
+    min-width: 1%;
+    padding: 0.5rem 2rem;
+    margin: 0.5rem 0.5rem;
+    color: #555;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: .05rem;
+    text-decoration: none;
+    white-space: normal;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.tab {
+    display: none;
+}
+
+.tab:target {
+    display: block;
+    -webkit-animation: fadeEffect 1s;
+    animation: fadeEffect 1s;
+}
+
+.tabs > .tab:target ~ .tab:last-child, .tabs > .tab {
+    display: none;
+}
+
+.tabs > :last-child, .tabs > .tab:target {
+    display: block;
+}
+
+/* Fade in tabs */
+@-webkit-keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 from argparse import ArgumentParser
 from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import List, Optional, Type, TypeVar
+from typing import Any, List, Optional, Type, TypeVar
 
 import warehub
 from warehub.utils import EnvironmentDefault, parse_url
@@ -60,6 +60,10 @@ class Arguments:
             if "convert" in metadata and (value := parsed[field.name]) is not None:
                 parsed[field.name] = metadata["convert"](value)
 
+        return cls._format(parsed)
+
+    @classmethod
+    def _format(cls: Type[T], parsed: dict[str, Any]) -> T:
         return cls(**parsed)
 
 
@@ -119,6 +123,12 @@ class AddArgs(Arguments):
             "were added at the path provided. [default: .]",
         }
     )
+
+    @classmethod
+    def _format(cls: Type[T], parsed: dict[str, Any]) -> T:
+        if not parsed["domain"].endswith("/"):
+            parsed["domain"] += "/"
+        return cls(**parsed)
 
 
 @dataclass(frozen=True)

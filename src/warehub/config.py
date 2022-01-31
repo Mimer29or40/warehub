@@ -6,7 +6,7 @@ import logging
 import pprint
 from dataclasses import Field, asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Final, Optional
+from typing import Optional
 
 import warehub
 from warehub.utils import parse_url
@@ -30,7 +30,7 @@ def _warn(field: Field, message: str) -> None:
 
 @dataclass(frozen=True)
 class Config:
-    path: Final[Path] = field(
+    path: Path = field(
         default=".",
         metadata={
             "on_missing": functools.partial(
@@ -40,7 +40,7 @@ class Config:
             "convert": (lambda string: Path(string).resolve()),
         },
     )
-    database: Final[str] = field(
+    database: str = field(
         default="data.json",
         metadata={
             "on_missing": functools.partial(
@@ -49,7 +49,7 @@ class Config:
             ),
         },
     )
-    url: Final[str] = field(
+    url: str = field(
         default="",
         metadata={
             "on_missing": functools.partial(
@@ -59,7 +59,7 @@ class Config:
             "convert": parse_url,
         },
     )
-    title: Final[Optional[str]] = field(
+    title: Optional[str] = field(
         default="Personal Python Package Index",
         metadata={
             "on_missing": functools.partial(
@@ -68,7 +68,7 @@ class Config:
             ),
         },
     )
-    description: Final[Optional[str]] = field(
+    description: Optional[str] = field(
         default="Welcome to your private Python package index!",
         metadata={
             "on_missing": functools.partial(
@@ -77,7 +77,7 @@ class Config:
             ),
         },
     )
-    image_url: Final[Optional[str]] = field(
+    image_url: Optional[str] = field(
         default="https://pypi.org/static/images/logo-small.95de8436.svg",
         metadata={
             "on_missing": functools.partial(
@@ -105,6 +105,9 @@ class Config:
                 loaded[field.name] = field.default
             if "convert" in metadata:
                 loaded[field.name] = metadata["convert"](loaded[field.name])
+
+        if not loaded["url"].endswith("/"):
+            loaded["url"] += "/"
 
         logger.info(pprint.pformat(cls(**loaded)))
 
