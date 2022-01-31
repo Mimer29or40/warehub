@@ -51,6 +51,7 @@ def init(args: List[str]):
         (Config.path / directory).mkdir(parents=True, exist_ok=True)
 
 
+# TODO - This should be renamed to github and add should be for specific file urls
 def add(args: List[str]):
     """Execute the ``add`` command.
     :param args:
