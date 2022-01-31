@@ -26,7 +26,8 @@ def dep_versions() -> str:
 
 def main() -> Any:
     entry_points = importlib.metadata.entry_points()
-    commands = entry_points["warehub.commands"]
+    # noinspection PyUnresolvedReferences
+    commands = entry_points.select(group="warehub.commands")
 
     parser = argparse.ArgumentParser(prog="warehub")
 

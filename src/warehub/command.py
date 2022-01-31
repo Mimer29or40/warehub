@@ -185,16 +185,16 @@ def add_impl(args: AddArgs):
                 )
 
         if len(added) > 0:
-            logger.info(f"View new Packages at:")
-            for url in added:
-                logger.info(f"\t{url}")
-
             if not args.no_generate:
                 generate_args: GenerateArgs = GenerateArgs(args.verbose, args.config)
 
                 logger.info(pprint.pformat(generate_args))
 
                 generate_impl(generate_args)
+
+            logger.info(f"View new Packages at:")
+            for url in added:
+                logger.info(f"\t{url}")
 
 
 def generate_impl(args: GenerateArgs):
