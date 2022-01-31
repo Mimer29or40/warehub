@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="tox format" type="PythonConfigurationType" factoryName="Python" folderName="build">
+  <configuration default="false" name="format" type="PythonConfigurationType" factoryName="Python" folderName="build">
     <module name="warehub" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
