@@ -108,7 +108,7 @@ def setup(args: Arguments) -> None:
 def add_impl(args: AddArgs):
     kwargs = {}
     if args.token is not None:
-        kwargs["headers"] = {"": "token " + str(args.token)}
+        kwargs["headers"] = {"Authorization": "token " + str(args.token)}
         logger.debug("Token Provided")
     elif args.username is not None or args.password is not None:
         kwargs["auth"] = (args.username or "", args.password or "")
