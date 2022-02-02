@@ -1,0 +1,8 @@
+recursive-include src/warehub/templates *
+recursive-exclude test *
+recursive-exclude .idea *
+recursive-exclude docs *
+recursive-exclude changelog *
+exclude tox.ini
+exclude .flake8
+exclude .isort.cfg

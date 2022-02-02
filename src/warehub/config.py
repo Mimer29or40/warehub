@@ -4,9 +4,13 @@ import functools
 import json
 import logging
 import pprint
-from dataclasses import Field, asdict, dataclass, field, fields
+from dataclasses import Field
+from dataclasses import asdict
+from dataclasses import dataclass
+from dataclasses import field
+from dataclasses import fields
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 import warehub
 from warehub.utils import parse_url
@@ -50,7 +54,8 @@ class Config:
         metadata={
             "on_missing": functools.partial(
                 _raise,
-                message="Config must specify '{name}'. Usually 'https://<user>.github.io/<repo_name/'",
+                message="Config must specify '{name}'. Usually "
+                "'https://<user>.github.io/<repo_name/'",
             ),
             "convert": parse_url,
         },
@@ -92,15 +97,15 @@ class Config:
             file.write_text(json.dumps(asdict(cls()), indent=4))
 
         # This may error out if the json is malformed
-        loaded: dict[str, str] = json.loads(file.read_text())
+        loaded: Dict[str, str] = json.loads(file.read_text())
 
-        for field in fields(cls):
-            metadata = field.metadata
-            if field.name not in loaded or loaded[field.name] == "":
-                metadata["on_missing"](field)
-                loaded[field.name] = field.default
+        for cls_field in fields(cls):
+            metadata = cls_field.metadata
+            if cls_field.name not in loaded or loaded[cls_field.name] == "":
+                metadata["on_missing"](cls_field)
+                loaded[cls_field.name] = cls_field.default
             if "convert" in metadata:
-                loaded[field.name] = metadata["convert"](loaded[field.name])
+                loaded[cls_field.name] = metadata["convert"](loaded[cls_field.name])
 
         if not loaded["url"].endswith("/"):
             loaded["url"] += "/"

@@ -1,7 +1,14 @@
 [build-system]
-requires = ["setuptools>=60", "wheel", "setuptools_scm>=6.2"]
+requires = ["setuptools", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "version.py"
+write_to = "__version__.py"
 local_scheme = "no-local-version"
+
+[tool.towncrier]
+package = "warehub"
+filename = "docs/changelog.rst"
+directory = "changelog"
+issue_format = "`#{issue} <https://github.com/Mime29or40/warehub/issues/{issue}>`_"
+underlines = ["-", "^"]

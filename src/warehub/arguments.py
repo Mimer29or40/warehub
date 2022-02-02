@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from argparse import ArgumentParser
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass
+from dataclasses import field
+from dataclasses import fields
 from pathlib import Path
-from typing import Any, List, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
 import warehub
-from warehub.utils import EnvironmentDefault, parse_url
+from warehub.utils import EnvironmentDefault
+from warehub.utils import parse_url
 
 T = TypeVar("T")
 
@@ -38,13 +41,12 @@ class Arguments:
     )
 
     @classmethod
-    def from_args(cls: Type[T], args: list[str]) -> T:
+    def from_args(cls: Type[T], args: List[str]) -> T:
         """Generate the Settings from parsed arguments."""
-
         parser = ArgumentParser(prog=f"{warehub.__title__} {cls.__name__.lower()}")
 
-        for field in fields(cls):
-            metadata = dict(field.metadata)
+        for cls_field in fields(cls):
+            metadata = dict(cls_field.metadata)
             metadata.pop("convert", None)
             name_or_flags = tuple(
                 metadata.pop("name_or_flags") if "name_or_flags" in metadata else []
@@ -53,15 +55,15 @@ class Arguments:
 
         parsed = vars(parser.parse_args(args))
 
-        for field in fields(cls):
-            metadata = field.metadata
-            if "convert" in metadata and (value := parsed[field.name]) is not None:
-                parsed[field.name] = metadata["convert"](value)
+        for cls_field in fields(cls):
+            metadata = cls_field.metadata
+            if "convert" in metadata and (value := parsed[cls_field.name]) is not None:
+                parsed[cls_field.name] = metadata["convert"](value)
 
         return cls._format(parsed)
 
     @classmethod
-    def _format(cls: Type[T], parsed: dict[str, Any]) -> T:
+    def _format(cls: Type[T], parsed: Dict[str, Any]) -> T:
         return cls(**parsed)
 
 
@@ -137,7 +139,7 @@ class AddArgs(Arguments):
     )
 
     @classmethod
-    def _format(cls: Type[T], parsed: dict[str, Any]) -> T:
+    def _format(cls: Type[T], parsed: Dict[str, Any]) -> T:
         if not parsed["domain"].endswith("/"):
             parsed["domain"] += "/"
         return cls(**parsed)

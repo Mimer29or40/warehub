@@ -2,11 +2,11 @@ from __future__ import annotations
 
 
 class WarehubException(Exception):
-    """Base Exception"""
+    """Base Exception."""
 
 
 class DatabaseException(WarehubException):
-    """Base Database Exception"""
+    """Base Database Exception."""
 
 
 class InvalidDistribution(WarehubException):

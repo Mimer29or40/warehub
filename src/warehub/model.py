@@ -1,8 +1,9 @@
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from dataclasses import field
 from datetime import datetime
-from importlib.resources import path
-from typing import Final, Optional
+from pathlib import Path
+from typing import Dict, Final, List, Optional, Set
 
 import packaging.utils
 
@@ -16,13 +17,13 @@ class Directory:
     SIMPLE: Final[str] = "simple"
     PYPI: Final[str] = "pypi"
 
-    LIST: Final[set[str]] = {FILES, PROJECT, SIMPLE, PYPI}
+    LIST: Final[Set[str]] = {FILES, PROJECT, SIMPLE, PYPI}
 
 
 class Template:
-    # STYLE: Final[str] = read_text(warehub.__title__, "style.css")
-    # HOMEPAGE: Final[str] = read_text(warehub.__title__, "homepage.html")
-    with path(warehub.__title__, "templates") as path:
+    # This is not working on 3.9
+    # with importlib.resources.path(warehub.__title__, "templates") as path:
+    with (Path(warehub.__file__).parent / "templates").resolve() as path:
         HOMEPAGE: Final[str] = (path / "homepage.html").read_text()
         RELEASE: Final[str] = (path / "release.html").read_text()
         SIMPLE: Final[str] = (path / "simple.html").read_text()
@@ -54,16 +55,16 @@ class Release(Table):
     maintainer: Optional[str] = None
     maintainer_email: Optional[str] = None
     summary: Optional[str] = None
-    description: dict[str, str] = field(default_factory=dict)
+    description: Dict[str, str] = field(default_factory=dict)
     keywords: Optional[str] = None
-    classifiers: list[str] = field(default_factory=list)
+    classifiers: List[str] = field(default_factory=list)
     license: Optional[str] = None
     platform: Optional[str] = None
     home_page: Optional[str] = None
     download_url: Optional[str] = None
     requires_python: Optional[str] = None
-    dependencies: dict[str, list[str]] = field(default_factory=dict)
-    project_urls: list[str] = field(default_factory=list)
+    dependencies: Dict[str, List[str]] = field(default_factory=dict)
+    project_urls: List[str] = field(default_factory=list)
     uploader: Optional[str] = None  # User that created the issue
     uploaded_via: Optional[str] = None
     yanked: bool = False
@@ -71,7 +72,7 @@ class Release(Table):
 
     @property
     def is_pre_release(self):
-        return re.match(rf"(a|b|rc)(0|[1-9][0-9]*)", self.version) is not None
+        return re.match(r"(a|b|rc)(0|[1-9][0-9]*)", self.version) is not None
 
     @property
     def urls(self):
@@ -97,7 +98,8 @@ class Release(Table):
     #     for url in self.urls.values():
     #         parsed = urlparse(url)
     #         segments = parsed.path.strip("/").split("/")
-    #         if parsed.netloc in {"github.com", "www.github.com"} and len(segments) >= 2:
+    #         if (parsed.netloc in {"github.com", "www.github.com"} and
+    #             len(segments) >= 2):
     #             user_name, repo_name = segments[:2]
     #             return f"https://api.github.com/repos/{user_name}/{repo_name}"
 

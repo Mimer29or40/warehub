@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import MISSING, Field, asdict
+from dataclasses import MISSING
+from dataclasses import Field
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Literal, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Type, TypeVar, Union
 
 T = TypeVar("T")
 JsonValue = Union[dict, list, str, int, float, bool, Literal[None]]
@@ -20,11 +22,11 @@ class Encoder:
         return f"{self.__class__.__name__}(obj_type={self.obj_type.__name__})"
 
     def check(self, obj: Any) -> bool:
-        """Check if object can be encoded"""
+        """Check if object can be encoded."""
         return self.obj_type == obj.__class__
 
-    def encode(self, obj: Any) -> dict[str, JsonValue]:
-        """Encodes the python object into a JSON object"""
+    def encode(self, obj: Any) -> Dict[str, JsonValue]:
+        """Encodes the python object into a JSON object."""
         return {
             "__type__": self.obj_type.__name__,
             "value": self.encoder(obj),
@@ -39,12 +41,12 @@ class Decoder:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(obj_type={self.obj_type.__name__})"
 
-    def check(self, obj: dict[str, JsonValue]) -> bool:
-        """Check if object can be decoded"""
+    def check(self, obj: Dict[str, JsonValue]) -> bool:
+        """Check if object can be decoded."""
         return self.obj_type.__name__ == obj["__type__"]
 
-    def decode(self, obj: dict[str, JsonValue]) -> Any:
-        """Decodes the JSON object into a python object"""
+    def decode(self, obj: Dict[str, JsonValue]) -> Any:
+        """Decodes the JSON object into a python object."""
         return self.decoder(obj["value"])
 
 
@@ -56,11 +58,11 @@ class TableEncoder(Encoder):
         return hash(Table)
 
     def check(self, obj: Any) -> bool:
-        """Check if object can be encoded"""
+        """Checks if object can be encoded."""
         return isinstance(obj, Table)
 
-    def encode(self, obj: Any) -> dict[str, JsonValue]:
-        """Encodes the python object into a JSON object"""
+    def encode(self, obj: Any) -> Dict[str, JsonValue]:
+        """Encodes the python object into a JSON object."""
         return {
             "__type__": obj.__class__.__name__,
             "value": self.encoder(obj),
@@ -75,18 +77,18 @@ class TableDecoder(Decoder):
         return hash(Table)
 
     @staticmethod
-    def sub_types(_type: type) -> dict[str, type]:
+    def sub_types(_type: type) -> Dict[str, type]:
         sub_types = {_type.__name__: _type}
         for sub in _type.__subclasses__():
             sub_types.update(TableDecoder.sub_types(sub))
         return sub_types
 
-    def check(self, obj: dict[str, JsonValue]) -> bool:
-        """Check if object can be decoded"""
+    def check(self, obj: Dict[str, JsonValue]) -> bool:
+        """Check if object can be decoded."""
         return obj["__type__"] in TableDecoder.sub_types(Table)
 
-    def decode(self, obj: dict[str, JsonValue]) -> Any:
-        """Decodes the JSON object into a python object"""
+    def decode(self, obj: Dict[str, JsonValue]) -> Any:
+        """Decodes the JSON object into a python object."""
         return TableDecoder.sub_types(Table)[obj["__type__"]](**obj["value"])
 
 
@@ -149,9 +151,9 @@ class TableField(Field):
 class MetaTable(type):
     def __getattribute__(self, name):
         if name != "__dataclass_fields__" and name in (
-            dict := getattr(self, "__dataclass_fields__", {})
+            field_dict := getattr(self, "__dataclass_fields__", {})
         ):
-            return dict.setdefault(f"{name}_attr", TableField(dict[name]))
+            return field_dict.setdefault(f"{name}_attr", TableField(field_dict[name]))
         return super().__getattribute__(name)
 
 
@@ -181,10 +183,10 @@ ComparisonType = Union[Comparison, bool]
 
 class Database:
     _file: Path = Path("data.json")
-    _data: dict[str, Any] = None
+    _data: Dict[str, Any] = None
 
-    _encoders: dict[str, Encoder] = {}
-    _decoders: dict[str, Decoder] = {}
+    _encoders: Dict[str, Encoder] = {}
+    _decoders: Dict[str, Decoder] = {}
 
     @classmethod
     def file(cls, new_file: Path = None) -> Path:
@@ -207,7 +209,7 @@ class Database:
         cls._decoders[_type] = decoder
 
     @classmethod
-    def _encode(cls, obj: Any) -> dict[str, JsonValue]:
+    def _encode(cls, obj: Any) -> Dict[str, JsonValue]:
         found = [e for e in cls._encoders.values() if e.check(obj)]
         _len = len(found)
         if _len > 1:
@@ -219,7 +221,7 @@ class Database:
         raise TypeError(f"Object of type {obj_type} is not JSON serializable")
 
     @classmethod
-    def _decode(cls, obj: dict[str, JsonValue]) -> Any:
+    def _decode(cls, obj: Dict[str, JsonValue]) -> Any:
         if "__type__" in obj:
             found = [d for d in cls._decoders.values() if d.check(obj)]
             _len = len(found)
@@ -267,8 +269,8 @@ class Database:
     @classmethod
     def get(
         cls, table: Type[TableType], where: ComparisonType = None
-    ) -> tuple[TableType]:
-        results: list[TableType] = []
+    ) -> Tuple[TableType, ...]:
+        results: List[TableType] = []
         for id, entry in cls._get(table, where):
             entry._id = int(id)
             results.append(entry)
@@ -277,8 +279,8 @@ class Database:
     @classmethod
     def pop(
         cls, table: Type[TableType], where: ComparisonType = None
-    ) -> tuple[TableType]:
-        results: list[TableType] = []
+    ) -> Tuple[TableType, ...]:
+        results: List[TableType] = []
         for id, table_entry in cls._get(table, where):
             results.append(table(**table_entry))
         return tuple(results)
@@ -306,7 +308,7 @@ class Database:
     @classmethod
     def _get(
         cls, table: Type[TableType], where: ComparisonType = None
-    ) -> list[tuple[str, TableType]]:
+    ) -> List[Tuple[str, TableType]]:
         if cls._data is None:
             cls.rollback()
 
@@ -316,7 +318,7 @@ class Database:
 
         pre_check = where is None or (isinstance(where, bool) and where)
 
-        results: list[tuple[str, TableType]] = []
+        results: List[Tuple[str, TableType]] = []
         for id, table_entry in cls._data[table_name].items():
             if pre_check or where.compare(table_entry):
                 results.append((id, table_entry))

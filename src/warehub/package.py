@@ -8,22 +8,31 @@ import shutil
 from cgi import parse_header
 from pathlib import Path
 from types import NoneType
-from typing import Any, Optional, Type, Union, get_args, get_origin
+from typing import Any, List, Optional, Type, Union, get_args, get_origin
 
-from packaging.requirements import InvalidRequirement, Requirement
-from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.requirements import InvalidRequirement
+from packaging.requirements import Requirement
+from packaging.specifiers import InvalidSpecifier
+from packaging.specifiers import SpecifierSet
 from packaging.version import Version
-from pkginfo import BDist, SDist, Wheel
+from pkginfo import BDist
+from pkginfo import SDist
+from pkginfo import Wheel
 from pkginfo.distribution import HEADER_ATTRS
 from rfc3986 import uri_reference
 from rfc3986.exceptions import ValidationError
 from rfc3986.validators import Validator
-from trove_classifiers import classifiers, deprecated_classifiers
+from trove_classifiers import classifiers
+from trove_classifiers import deprecated_classifiers
 
 from warehub.config import Config
 from warehub.database import Database
 from warehub.exceptions import InvalidDistribution
-from warehub.model import Directory, File, FileName, Project, Release
+from warehub.model import Directory
+from warehub.model import File
+from warehub.model import FileName
+from warehub.model import Project
+from warehub.model import Release
 from warehub.utils import file_size_str
 
 ONE_KB = 1024
@@ -355,7 +364,7 @@ def sanitize(type: Type, value: Any) -> Any:
 
     if value is None:
         if not optional:
-            raise ValueError(f"missing required field")
+            raise ValueError("missing required field")
     elif not isinstance(value, type):
         value = type(value)
 
@@ -391,11 +400,13 @@ def validate_email(value):
     pattern = re.compile(
         (
             r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\""
-            r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")"
+            r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|"
+            r"\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")"
             r"@((?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
             r"|\[(?:(?:2(?:5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])\.){3}"
             r"(?:(?:2(?:5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:"
-            r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)])"
+            r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|"
+            r"\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)])"
         ),
         re.IGNORECASE,
     )
@@ -521,7 +532,8 @@ def validate_requires_external(value):
         parsed = re.search(r"^(?P<name>\S+)(?: \((?P<specifier>\S+)\))?$", datum)
         if parsed is None:
             raise ValueError("Invalid requirement.")
-        name, specifier = parsed.groupdict()["name"], parsed.groupdict()["specifier"]
+        # name, specifier = parsed.groupdict()["name"], parsed.groupdict()["specifier"]
+        specifier = parsed.groupdict()["specifier"]
 
         if specifier is not None:
             validate_pep440_specifier(specifier)
@@ -552,7 +564,7 @@ def validate_project_urls(value):
 def is_valid_uri(
     uri,
     require_scheme: bool = True,
-    allowed_schemes: list[str] = None,
+    allowed_schemes: List[str] = None,
     require_authority: bool = True,
 ):
     if allowed_schemes is None:

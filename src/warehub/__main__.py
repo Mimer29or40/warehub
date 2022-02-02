@@ -2,7 +2,7 @@ import argparse
 import http
 import importlib.metadata
 import sys
-from typing import Any
+from typing import Any, List, Tuple
 
 import colorama
 import requests
@@ -12,7 +12,7 @@ import warehub
 from warehub.exceptions import WarehubException
 
 
-def list_deps_and_versions() -> list[tuple[str, str]]:
+def list_deps_and_versions() -> List[Tuple[str, str]]:
     requires = importlib.metadata.requires("warehub")
     deps = [Requirement(r).name for r in requires]
     return [(dep, importlib.metadata.version(dep)) for dep in deps]

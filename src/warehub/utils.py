@@ -1,6 +1,8 @@
 import os
 import urllib.parse
-from argparse import Action, ArgumentParser, Namespace
+from argparse import Action
+from argparse import ArgumentParser
+from argparse import Namespace
 from pathlib import Path
 from typing import Any, Optional, Sequence, Union
 
