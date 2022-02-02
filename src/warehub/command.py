@@ -7,7 +7,7 @@ import tempfile
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
-from typing import DefaultDict, List, Optional
+from typing import Any, DefaultDict, List, Optional
 
 import readme_renderer.markdown
 import readme_renderer.rst
@@ -93,7 +93,7 @@ def yank(args: List[str]):
 
 def setup(args: Arguments) -> None:
     logger.addHandler(logging.StreamHandler(sys.stdout))
-    logger.setLevel(logging.DEBUG if args.verbose else logging.WARNING)
+    logger.setLevel(logging.DEBUG if args.verbose else logging.INFO)
 
     logger.info(pprint.pformat(args))
 
@@ -106,7 +106,7 @@ def setup(args: Arguments) -> None:
 
 
 def add_impl(args: AddArgs):
-    kwargs = {}
+    kwargs: dict[str, Any] = {}
     if args.token is not None:
         kwargs["headers"] = {"Authorization": "token " + str(args.token)}
         logger.debug("Token Provided")
@@ -114,7 +114,7 @@ def add_impl(args: AddArgs):
         kwargs["auth"] = (args.username or "", args.password or "")
         logger.debug("Username and Password provided")
 
-    file_urls: list[str] = []
+    file_urls: list[tuple[str, str]] = []
     for repo_path in args.repositories:
         repo_url = parse_url(args.domain + f"repos/{repo_path}/releases")
         logger.info(f"Getting Releases from: {repo_url}")
@@ -129,7 +129,7 @@ def add_impl(args: AddArgs):
             continue
         for info in releases_obj:
             for asset in info["assets"]:
-                file_urls.append(asset["browser_download_url"])
+                file_urls.append((asset["name"], asset["url"]))
     if len(file_urls) == 0:
         logger.info("No Files to Download")
         return
@@ -139,7 +139,9 @@ def add_impl(args: AddArgs):
         temp_dir = Path(temp)
 
         downloaded_files: list[Path] = []
-        for file_url in file_urls:
+        for file_name, file_url in file_urls:
+            headers = kwargs.setdefault('headers', {})
+            headers.update({"Accept": "application/octet-stream"})
             download = requests.get(file_url, **kwargs)
             logger.debug(f"Response Code: {download.status_code}")
             if download.status_code != requests.codes.ok:
@@ -148,7 +150,7 @@ def add_impl(args: AddArgs):
                 )
                 continue
 
-            file = temp_dir / file_url.split("/")[-1]
+            file = temp_dir / file_name
             file.write_bytes(download.content)
 
             logger.info(f"Downloaded File: {file_url}\n  to: {file.absolute()}")
