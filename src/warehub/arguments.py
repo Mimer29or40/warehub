@@ -93,6 +93,19 @@ class AddArgs(Arguments):
             "convert": Secure,
         }
     )
+    token: Optional[str] = field(
+        metadata={
+            "name_or_flags": ["-t", "--token"],
+            "action": EnvironmentDefault,
+            "env": "WAREHUB_TOKEN",
+            "required": False,
+            "help": "The token to authenticate to the repository "
+            "(package index) with. (Can also be set via "
+            "%(env)s environment variable.) "
+            "[default: env.WAREHUB_TOKEN]",
+            "convert": Secure,
+        }
+    )
     domain: str = field(
         metadata={
             "name_or_flags": ["-d", "--domain"],

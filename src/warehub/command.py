@@ -106,19 +106,19 @@ def setup(args: Arguments) -> None:
 
 
 def add_impl(args: AddArgs):
-    auth: Optional[tuple[Optional[str], Optional[str]]] = (
-        (args.username or "", args.password or "")
-        if args.username or args.password
-        else None
-    )
-    if auth is not None:
-        logger.debug("Authentication provided")
+    kwargs = {}
+    if args.token is not None:
+        kwargs["headers"] = {"": "token " + str(args.token)}
+        logger.debug("Token Provided")
+    elif args.username is not None or args.password is not None:
+        kwargs["auth"] = (args.username or "", args.password or "")
+        logger.debug("Username and Password provided")
 
     file_urls: list[str] = []
     for repo_path in args.repositories:
         repo_url = parse_url(args.domain + f"repos/{repo_path}/releases")
         logger.info(f"Getting Releases from: {repo_url}")
-        response = requests.get(repo_url, auth=auth)
+        response = requests.get(repo_url, **kwargs)
         releases_obj = response.json()
         logger.debug(f"Response Code: {response.status_code}")
         if response.status_code != requests.codes.ok:
@@ -140,7 +140,7 @@ def add_impl(args: AddArgs):
 
         downloaded_files: list[Path] = []
         for file_url in file_urls:
-            download = requests.get(file_url, auth=auth)
+            download = requests.get(file_url, **kwargs)
             logger.debug(f"Response Code: {download.status_code}")
             if download.status_code != requests.codes.ok:
                 logger.warning(
